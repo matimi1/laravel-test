@@ -3,10 +3,33 @@
 namespace App\Http\Controllers;
 
 use DB;
+use App\Models\Genre;
+use App\Models\Movie;
+use App\Models\MoviePerson;
+use App\Models\Person;
 use Illuminate\Http\Request;
 
 class MovieController extends Controller
 {
+    public function index()
+    {
+        $starting_letter = 'b';
+        $movies = Movie::orderBy('name')  // ORDER BY `name`
+            ->where('name', '!=', '')     // WHERE `name` != ''
+            ->limit(20)                   // LIMIT 20
+            ->where('name', 'like', $starting_letter.'%') //   AND `name` LIKE 'a%'
+            ->get();
+
+        return view('movies/index', compact('movies', 'starting_letter'));
+
+        // compact('movies', 'starting_letter');
+
+        // [
+        //     'movies' => $movies,
+        //     'starting_letter' => $starting_letter
+        // ]
+    }
+
     public function topRated()
     {
         $query = "
@@ -65,20 +88,15 @@ class MovieController extends Controller
 
             $search_term = $_GET['search'];
 
-            $results = DB::select("
-                SELECT *
-                FROM `movies`
-                WHERE `name` LIKE ?
-                ORDER BY `name` ASC
-            ", [
-                '%' . $search_term . '%'
-            ]);
+            $results = Movie::where('name', 'like', '%' . $search_term . '%')
+                ->orderBy('name', 'asc')
+                ->get();
 
         } else {
 
             // no searching
             $search_term = '';
-            $results = [];
+            $results = collect();
         }
 
         return view('movies.search', [
@@ -91,25 +109,49 @@ class MovieController extends Controller
     {
         $movie_id = $_GET['id'];
 
-        $movie = DB::selectOne('
-            SELECT *
-            FROM `movies`
-            WHERE `id` = ?
-        ', [
-            $movie_id
-        ]);
+        // $movie = Movie::where('id', $movie_id)->first();
 
-        $all_people = DB::select("
-            SELECT `positions`.`name` AS position_name, `people`.*
-            FROM `movie_person`
-            LEFT JOIN `positions`
-                ON `movie_person`.`position_id` = `positions`.`id`
-            LEFT JOIN `people`
-                ON `movie_person`.`person_id` = `people`.`id`
-            WHERE `movie_person`.`movie_id` = ?
-        ", [
-            $movie->id
-        ]);
+        // $movie = Movie::find($movie_id);
+
+        $movie = Movie::findOrFail($movie_id);
+
+        $all_people = MoviePerson::query()
+            ->leftJoin('positions', 'movie_person.position_id', 'positions.id')
+            ->leftJoin('people', 'movie_person.person_id', 'people.id')
+            ->where('movie_person.movie_id', $movie->id)
+            ->selectRaw('`positions`.`name` AS position_name, `people`.*')
+            ->get();
+
+        $all_people = Person::query()
+            ->rightJoin('movie_person', 'people.id', 'movie_person.person_id')
+            ->leftJoin('positions', 'movie_person.position_id', 'positions.id')
+            ->where('movie_person.movie_id', $movie->id)
+            ->selectRaw('`positions`.`name` AS position_name, `people`.*')
+            ->get();
+
+        // $all_people = DB::select("
+        //     SELECT `positions`.`name` AS position_name, `people`.*
+        //     FROM `people`
+        //     RIGHT JOIN `movie_person`
+        //         ON `people`.`id` = `movie_person`.`person_id`
+        //     LEFT JOIN `positions`
+        //         ON `movie_person`.`position_id` = `positions`.`id`
+        //     WHERE `movie_person`.`movie_id` = ?
+        // ", [
+        //     $movie->id
+        // ]);
+
+        // $all_people = DB::select("
+        //     SELECT `positions`.`name` AS position_name, `people`.*
+        //     FROM `movie_person`
+        //     LEFT JOIN `positions`
+        //         ON `movie_person`.`position_id` = `positions`.`id`
+        //     LEFT JOIN `people`
+        //         ON `movie_person`.`person_id` = `people`.`id`
+        //     WHERE `movie_person`.`movie_id` = ?
+        // ", [
+        //     $movie->id
+        // ]);
 
         $people_sorted_by_position = [];
         foreach ($all_people as $person) {
@@ -124,6 +166,12 @@ class MovieController extends Controller
 
     public function actionMovies()
     {
+        // $genre = Genre::where('name', 'action')->first();
+
+        // $movies = $genre->movies;
+
+        // dd( $movies );
+
         $query = "
             SELECT `movies`.*
             FROM `genre_movie`
@@ -142,5 +190,29 @@ class MovieController extends Controller
             'genre_name' => 'Action movies',
             'movies' => $movies
         ]);
+    }
+
+
+    public function create()
+    {
+        // prepare empty object
+        $movie = new Movie;
+
+        // display the form view, passing in the movie
+        return view('movies/create', compact('movie'));
+    }
+
+    public function store()
+    {
+        // prepare empty object
+        $movie = new Movie;
+
+        $movie->name = $_POST['name'] ?? $movie->name;
+        $movie->year = $_POST['year'] ?? $movie->year;
+
+        // save the record into DB
+        $movie->save();
+
+        return redirect( url('/movies/detail?id='.$movie->id) );
     }
 }

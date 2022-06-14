@@ -10,9 +10,25 @@
 
     <h1><?= $movie->name ?></h1>
 
+    <?php if ($movie->movieType) : ?>
+        <div class="type">
+            <?= $movie->movieType->name ?>
+        </div>
+    <?php endif; ?>
+
     <div class="year">
         <?= $movie->year ?>
     </div>
+
+    <h2>Genres</h2>
+
+    <ul>
+        <?php foreach ($movie->genres as $genre) : ?>
+            <li>
+                <?= $genre->name ?>
+            </li>
+        <?php endforeach; ?>
+    </ul>
 
     <h2>Cast & crew</h2>
 

@@ -34,3 +34,7 @@ Route::get('/search', ['App\Http\Controllers\MovieController', 'search']);
 Route::get('/movies/detail', ['App\Http\Controllers\MovieController', 'detail']);
 Route::get('/people/detail', ['App\Http\Controllers\ActorController', 'detail']);
 Route::get('/movies/genre/action', ['App\Http\Controllers\MovieController', 'actionMovies']);
+Route::get('/movies', ['App\Http\Controllers\MovieController', 'index']);
+
+Route::get('/movies/create', ['App\Http\Controllers\MovieController', 'create']);
+Route::post('/movies', ['App\Http\Controllers\MovieController', 'store']);

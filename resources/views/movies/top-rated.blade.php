@@ -16,6 +16,7 @@
                 <a href="/movies/detail?id=<?= $movie->id ?>">
                     <?= $movie->name ?>
                     (<?= $movie->year ?>)
+
                 </a>
             </li>
         <?php endforeach; ?>
