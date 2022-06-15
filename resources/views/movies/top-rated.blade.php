@@ -8,12 +8,14 @@
 </head>
 <body>
 
+    <a href="<?= route('search') ?>">Search</a>
+
     <h1>Top rated movies</h1>
 
     <ul>
         <?php foreach ($movies as $movie) : ?>
             <li>
-                <a href="/movies/detail?id=<?= $movie->id ?>">
+                <a href="<?= route('movie.detail', $movie->id) ?>">
                     <?= $movie->name ?>
                     (<?= $movie->year ?>)
 

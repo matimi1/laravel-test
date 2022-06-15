@@ -4,22 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Top rated <?= $genre_name ?></title>
+    <title><?= $genre->name ?>: top rated movies</title>
 </head>
 <body>
 
-    <h1>Top rated <?= $genre_name ?></h1>
+    <a href="<?= action(['App\Http\Controllers\MovieController', 'search']) ?>">Search</a>
+
+    <h1>{{ $genre->name }}: top rated movies</h1>
 
     <ul>
-        <?php foreach ($movies as $movie) : ?>
+        @foreach ($movies as $movie)
             <li>
-                <a href="/movies/detail?id=<?= $movie->id ?>">
+                <a href="<?= action('MovieController@detail', $movie->id) ?>">
                     <?= $movie->name ?>
                     (<?= $movie->year ?>)
                 </a>
+                - <?= $movie->rating ?>/10
             </li>
-        <?php endforeach; ?>
+        @endforeach
     </ul>
+
+    @php
+        $my_value = 'abc';
+    @endphp
+
+    @dump($my_value)
+
+    @dd($my_value)
 
 </body>
 </html>

@@ -12,10 +12,8 @@ class ActorController extends Controller
         return '<h1>Most popular actors NOW!</h1>';
     }
 
-    public function detail()
+    public function detail($actor_id)
     {
-        $actor_id = $_GET['id'];
-
         $actor = DB::selectOne('
             SELECT *
             FROM `people`

@@ -10,27 +10,29 @@
 
     <h1>Search for a movie</h1>
 
-    <form action="/search" method="get">
+    <form action="{{ route('search') }}" method="get">
 
         <input
             type="text"
             name="search"
-            value="<?= htmlspecialchars($search_term) ?>"
+            value="{{ $search_term }}"
         >
 
         <button>Search</button>
 
+        {{-- this is really hidden from the outside --}}
+
     </form>
 
     <ul>
-        <?php foreach ($results as $movie) : ?>
+        @foreach ($results as $movie)
             <li>
-                <a href="/movies/detail?id=<?= $movie->id ?>">
-                    <?= $movie->name ?>
-                    (<?= $movie->year ?>)
+                <a href="{{ route('movie.detail', $movie->id) }}">
+                    {{ $movie->name }}
+                    ({{ $movie->year }})
                 </a>
             </li>
-        <?php endforeach; ?>
+        @endforeach
     </ul>
 
 </body>

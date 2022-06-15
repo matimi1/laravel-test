@@ -10,13 +10,13 @@
 
     <h1>Create a new movie</h1>
 
-    <form action="/movies" method="post">
+    <form action="{{ action('MovieController@store') }}" method="post">
         @csrf
 
         <input
             type="text"
             name="name"
-            value="<?= htmlspecialchars($movie->name) ?>"
+            value="{{ $movie->name) }}"
         >
 
         <button>Create a movie!</button>

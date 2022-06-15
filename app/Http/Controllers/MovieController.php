@@ -11,10 +11,19 @@ use Illuminate\Http\Request;
 
 class MovieController extends Controller
 {
-    public function index()
+    public function index($sorting = null)
     {
         $starting_letter = 'b';
-        $movies = Movie::orderBy('name')  // ORDER BY `name`
+
+        $query_builder = Movie::query();
+
+        if ($sorting == 'rating') {
+            $query_builder->orderBy('rating');
+        } elseif ($sorting == 'alpha') {
+            $query_builder->orderBy('name'); // ORDER BY `name`
+        }
+
+        $movies = $query_builder
             ->where('name', '!=', '')     // WHERE `name` != ''
             ->limit(20)                   // LIMIT 20
             ->where('name', 'like', $starting_letter.'%') //   AND `name` LIKE 'a%'
@@ -105,10 +114,8 @@ class MovieController extends Controller
         ]);
     }
 
-    public function detail()
+    public function detail($movie_id)
     {
-        $movie_id = $_GET['id'];
-
         // $movie = Movie::where('id', $movie_id)->first();
 
         // $movie = Movie::find($movie_id);
@@ -164,30 +171,36 @@ class MovieController extends Controller
         ]);
     }
 
-    public function actionMovies()
+    public function moviesOfGenre($genre_slug)
     {
-        // $genre = Genre::where('name', 'action')->first();
+        $genre = Genre::where('slug', $genre_slug)
+            ->firstOrFail();
 
-        // $movies = $genre->movies;
+        $movies = $genre->movies()
+            ->where('votes_nr', '>=', 5000)
+            ->where('movie_type_id', 1)
+            ->orderBy('rating', 'desc')
+            ->limit(50)
+            ->get();
 
         // dd( $movies );
 
-        $query = "
-            SELECT `movies`.*
-            FROM `genre_movie`
-            LEFT JOIN `movies`
-                ON `genre_movie`.`movie_id` = `movies`.`id`
-            WHERE `genre_movie`.`genre_id` = ?
-                AND `votes_nr` >= ?
-                AND `movie_type_id` = ?
-            ORDER BY `rating` DESC
-            LIMIT 50
-        ";
+        // $query = "
+        //     SELECT `movies`.*
+        //     FROM `genre_movie`
+        //     LEFT JOIN `movies`
+        //         ON `genre_movie`.`movie_id` = `movies`.`id`
+        //     WHERE `genre_movie`.`genre_id` = ?
+        //         AND `votes_nr` >= ?
+        //         AND `movie_type_id` = ?
+        //     ORDER BY `rating` DESC
+        //     LIMIT 50
+        // ";
 
-        $movies = DB::select($query, [31, 5000, 1]);
+        // $movies = DB::select($query, [31, 5000, 1]);
 
         return view('movies.top-rated-genre', [
-            'genre_name' => 'Action movies',
+            'genre' => $genre,
             'movies' => $movies
         ]);
     }
