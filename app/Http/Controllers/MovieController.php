@@ -253,6 +253,16 @@ class MovieController extends Controller
         return redirect( url('/movies/detail/'.$movie->id) );
     }
 
+    public function destroy($id)
+    {
+        $movie = Movie::findOrFail($id);
+
+        $movie->delete();
+
+        session()->flash('success_message', 'Movie was deleted.');
+
+        return redirect( url('/top-rated-movies') );
+    }
 //    private function validateMovie($request)
 //    {
 //        $this->validate($request, [

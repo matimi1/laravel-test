@@ -39,11 +39,13 @@ Route::get('/search', ['App\Http\Controllers\MovieController', 'search'])->name(
 Route::get('/people/detail/{person_id}', ['App\Http\Controllers\ActorController', 'detail']);
 Route::get('/movies/genre/{genre_slug}', ['App\Http\Controllers\MovieController', 'moviesOfGenre']);
 
-Route::get('/movies/detail/{movie_id}', ['App\Http\Controllers\MovieController', 'detail'])->whereNumber('movie_id')->name('movie.detail');
+Route::get('/movies/{movie_id}', ['App\Http\Controllers\MovieController', 'detail'])->whereNumber('movie_id')->name('movie.detail');
+Route::redirect('/movies/detail/{movie_id}', '/movies/{movie_id}');
 Route::get('/movies/create', ['App\Http\Controllers\MovieController', 'create']);
 Route::get('/movies/{movieId}/edit', ['App\Http\Controllers\MovieController', 'edit'])->name('movie.edit');
 Route::post('/movies', ['App\Http\Controllers\MovieController', 'store']);
 Route::put('/movies/{movieId}', ['App\Http\Controllers\MovieController', 'update'])->name('movie.update');
+Route::delete('/movies/{movieId}', ['App\Http\Controllers\MovieController', 'destroy'])->name('movie.delete');
 
 Route::get('/movies/{sorting?}', ['App\Http\Controllers\MovieController', 'index'])->whereIn('sorting', ['rating', 'alpha']);
 

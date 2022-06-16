@@ -7,6 +7,7 @@
     <title>Top rated movies</title>
 </head>
 <body>
+    @include('common/messages')
 
     <a href="<?= route('search') ?>">Search</a>
 

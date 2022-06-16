@@ -49,6 +49,12 @@
 
     <?php endforeach; ?>
 
-    <a href="{{ action('MovieController@edit', [$movie->id]) }}">edit</a>
+    <a href="{{ action('MovieController@edit', [$movie->id]) }}"><button>Edit</button></a>
+
+    <form action="{{ route('movie.delete', $movie->id) }}" method="post">
+        @csrf
+        @method('delete')
+        <button>Delete</button>
+    </form>
 </body>
 </html>
