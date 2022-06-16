@@ -4,24 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Create a movie</title>
+    <title>{{ $movie->id ? 'Edit': 'Create' }} a movie</title>
 </head>
 <body>
 
-    <h1>Create a new movie</h1>
+    <h1>{{ $movie->id ? 'Edit': 'Create' }} a movie</h1>
 
-    <form action="{{ action('MovieController@store') }}" method="post">
+    @if ($movie->id)
+        <form action="/movies/{{ $movie->id }}" method="post">
+            @method('put')
+    @else
+        <form action="{{ action('MovieController@store') }}" method="post">
+    @endif
         @csrf
 
-        <input
-            type="text"
-            name="name"
-            value="{{ $movie->name) }}"
-        >
+            <label>Name:</label>
+            <input
+                type="text"
+                name="name"
+                value="{{ $movie->name }}"
+            >
 
-        <button>Create a movie!</button>
+            <label>Year:</label>
+            <input
+                type="text"
+                name="year"
+                value="{{ $movie->year }}"
+            >
+
+        <button>Send</button>
 
     </form>
-
 </body>
 </html>

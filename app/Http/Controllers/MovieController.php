@@ -91,11 +91,11 @@ class MovieController extends Controller
         ]);
     }
 
-    public function search()
+    public function search(Request $request)
     {
-        if (isset($_GET['search'])) {
+        if ($request->has('search')) {
 
-            $search_term = $_GET['search'];
+            $search_term = $request->input('search');
 
             $results = Movie::where('name', 'like', '%' . $search_term . '%')
                 ->orderBy('name', 'asc')
@@ -215,17 +215,38 @@ class MovieController extends Controller
         return view('movies/create', compact('movie'));
     }
 
-    public function store()
+    public function store(Request $request)
     {
         // prepare empty object
         $movie = new Movie;
 
-        $movie->name = $_POST['name'] ?? $movie->name;
-        $movie->year = $_POST['year'] ?? $movie->year;
+        $movie->name = $request->input('name');
+        $movie->year = $request->input('year');
+//        $movie->name = $_POST['name'] ?? $movie->name;
+//        $movie->year = $_POST['year'] ?? $movie->year;
 
         // save the record into DB
         $movie->save();
 
-        return redirect( url('/movies/detail?id='.$movie->id) );
+        return redirect( url('/movies/detail/'.$movie->id) );
+    }
+
+    public function edit($id)
+    {
+        $movie = Movie::findOrFail($id);
+
+        return view('movies/create', compact('movie'));
+    }
+
+    public function update($id, Request $request)
+    {
+        $movie = Movie::findOrFail($id);
+
+        $movie->name = $request->input('name');
+        $movie->year = $request->input('year');
+
+        $movie->save();
+
+        return redirect( url('/movies/detail/'.$movie->id) );
     }
 }
