@@ -8,6 +8,7 @@ use App\Models\Movie;
 use App\Models\MoviePerson;
 use App\Models\Person;
 use Illuminate\Http\Request;
+use App\Http\Requests\MovieRequest;
 
 class MovieController extends Controller
 {
@@ -215,17 +216,14 @@ class MovieController extends Controller
         return view('movies/create', compact('movie'));
     }
 
-    public function store(Request $request)
+    public function store(MovieRequest $request)
     {
-        // prepare empty object
+//        $this->validateMovie($request);
         $movie = new Movie;
 
         $movie->name = $request->input('name');
         $movie->year = $request->input('year');
-//        $movie->name = $_POST['name'] ?? $movie->name;
-//        $movie->year = $_POST['year'] ?? $movie->year;
 
-        // save the record into DB
         $movie->save();
 
         session()->flash('success_message', 'New movie registered.');
@@ -240,17 +238,9 @@ class MovieController extends Controller
         return view('movies/create', compact('movie'));
     }
 
-    public function update($id, Request $request)
+    public function update($id, MovieRequest $request)
     {
-        $this->validate($request, [
-            'name' => 'required|min:5',
-            'year' => 'numeric',
-        ], [
-            'name.min' => '5!!!',
-            'name.required' => 'What????'
-        ]);
-
-
+//        $this->validateMovie($request);
         $movie = Movie::findOrFail($id);
 
         $movie->name = $request->input('name');
@@ -262,4 +252,15 @@ class MovieController extends Controller
 
         return redirect( url('/movies/detail/'.$movie->id) );
     }
+
+//    private function validateMovie($request)
+//    {
+//        $this->validate($request, [
+//            'name' => 'required|min:5',
+//            'year' => 'nullable|numeric',
+//        ], [
+//            'name.min' => '5!!!',
+//            'name.required' => 'What????'
+//        ]);
+//    }
 }
