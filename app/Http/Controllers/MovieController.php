@@ -228,6 +228,8 @@ class MovieController extends Controller
         // save the record into DB
         $movie->save();
 
+        session()->flash('success_message', 'New movie registered.');
+
         return redirect( url('/movies/detail/'.$movie->id) );
     }
 
@@ -240,12 +242,23 @@ class MovieController extends Controller
 
     public function update($id, Request $request)
     {
+        $this->validate($request, [
+            'name' => 'required|min:5',
+            'year' => 'numeric',
+        ], [
+            'name.min' => '5!!!',
+            'name.required' => 'What????'
+        ]);
+
+
         $movie = Movie::findOrFail($id);
 
         $movie->name = $request->input('name');
         $movie->year = $request->input('year');
 
         $movie->save();
+
+        session()->flash('success_message', 'Movie was edited.');
 
         return redirect( url('/movies/detail/'.$movie->id) );
     }

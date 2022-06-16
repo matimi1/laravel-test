@@ -7,6 +7,7 @@
     <title>{{ $movie->id ? 'Edit': 'Create' }} a movie</title>
 </head>
 <body>
+    @include('common/messages')
 
     <h1>{{ $movie->id ? 'Edit': 'Create' }} a movie</h1>
 
@@ -22,14 +23,14 @@
             <input
                 type="text"
                 name="name"
-                value="{{ $movie->name }}"
+                value="{{ old('name', $movie->name) }}"
             >
 
             <label>Year:</label>
             <input
                 type="text"
                 name="year"
-                value="{{ $movie->year }}"
+                value="{{ old('year', $movie->year) }}"
             >
 
         <button>Send</button>

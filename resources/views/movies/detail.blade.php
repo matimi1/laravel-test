@@ -7,6 +7,7 @@
     <title><?= $movie->name ?> (<?= $movie->year ?>)</title>
 </head>
 <body>
+    @include('common/messages')
 
     <h1><?= $movie->name ?></h1>
 
@@ -48,5 +49,6 @@
 
     <?php endforeach; ?>
 
+    <a href="{{ action('MovieController@edit', [$movie->id]) }}">edit</a>
 </body>
 </html>
